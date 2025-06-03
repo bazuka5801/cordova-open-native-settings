@@ -3,10 +3,16 @@
 @implementation NativeSettings
 
 - (BOOL)do_open:(NSString *)pref {
-    if ([[UIApplication sharedApplication] openURL:[NSURL URLWithString:pref]]) {
+    NSURL *url = [NSURL URLWithString:pref];
+    UIApplication *application = [UIApplication sharedApplication];
+
+    if ([application respondsToSelector:@selector(openURL:options:completionHandler:)]) {
+        [application openURL:url options:@{} completionHandler:^(BOOL success) {
+            NSLog(@"Open %@: %d", pref, success);
+        }];
         return YES;
     } else {
-        return NO;
+        return [application openURL:url];
     }
 }
 
